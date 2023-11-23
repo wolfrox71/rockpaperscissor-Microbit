@@ -1,19 +1,26 @@
+radio.onReceivedNumber(function (receivedNumber) {
+    // make sure you are not playing against the computer
+    if (againstComputer == false) {
+        if (receivedNumber < 3 && receivedNumber >= 0) {
+            basic.showString("Rec" + receivedNumber)
+            p2Val = receivedNumber
+        }
+    }
+})
 function ComputerSetValue () {
     return randint(0, 2)
 }
 function getValues () {
+    basic.pause(200)
     p1Val = HumanSetValue()
     if (againstComputer == true) {
         p2Val = ComputerSetValue()
+    } else {
+        basic.showString("p1" + p1Val)
+        radio.sendNumber(p1Val)
+        p2Val = -1
     }
-    p2Val = -1
 }
-radio.onReceivedNumber(function (receivedNumber) {
-    // make sure you are not playing against the computer
-    if (againstComputer == false) {
-    	
-    }
-})
 function winner () {
     // If You Are Playing against the computer
     if (p1Val == p2Val) {
@@ -31,7 +38,7 @@ function setup () {
     while (changed == -1) {
         // while the play mode has not been selected
         if (input.buttonIsPressed(Button.A)) {
-            againstComputer = true
+            againstComputer = false
             changed = 1
             radioGroup = 1
             while (!(input.buttonIsPressed(Button.AB))) {
@@ -54,7 +61,7 @@ function setup () {
         }
         if (input.buttonIsPressed(Button.B)) {
             changed = 1
-            againstComputer = false
+            againstComputer = true
             basic.showString("S")
             radio.setGroup(1)
             break;
@@ -80,9 +87,12 @@ function HumanSetValue () {
 }
 let changed = 0
 let radioGroup = 0
-let p2Val = 0
-let againstComputer = false
 let p1Val = 0
+let againstComputer = false
+let p2Val = 0
 setup()
 getValues()
+while (p2Val == -1) {
+    basic.pause(100)
+}
 winner()
