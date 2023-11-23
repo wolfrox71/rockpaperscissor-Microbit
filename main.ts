@@ -1,54 +1,88 @@
+function ComputerSetValue () {
+    return randint(0, 2)
+}
+function getValues () {
+    p1Val = HumanSetValue()
+    if (againstComputer == true) {
+        p2Val = ComputerSetValue()
+    }
+    p2Val = -1
+}
 radio.onReceivedNumber(function (receivedNumber) {
     // make sure you are not playing against the computer
-    if (againstComputer == 0) {
+    if (againstComputer == false) {
     	
     }
 })
-function ComputerSetValue () {
-    // 0 Rock
-    // 1 Paper
-    // 2 Scissors
-    value = randint(0, 3)
-    return value
+function winner () {
+    // If You Are Playing against the computer
+    if (p1Val == p2Val) {
+        basic.showString("D")
+    } else if (p1Val == p2Val + 1 || p1Val == 0 && p2Val == 2) {
+        basic.showString("p1")
+    } else {
+        basic.showString("p2")
+    }
+    basic.showString("p2" + p2Val)
+}
+function setup () {
+    radioGroup = -1
+    changed = -1
+    while (changed == -1) {
+        // while the play mode has not been selected
+        if (input.buttonIsPressed(Button.A)) {
+            againstComputer = true
+            changed = 1
+            radioGroup = 1
+            while (!(input.buttonIsPressed(Button.AB))) {
+                basic.showString("" + (radioGroup))
+                if (input.buttonIsPressed(Button.A)) {
+                    if (radioGroup > 1) {
+                        radioGroup = radioGroup - 1
+                    }
+                    continue;
+                }
+                if (input.buttonIsPressed(Button.B)) {
+                    if (radioGroup < 254) {
+                        radioGroup = radioGroup + 1
+                    }
+                    continue;
+                }
+            }
+            radio.setGroup(radioGroup)
+            break;
+        }
+        if (input.buttonIsPressed(Button.B)) {
+            changed = 1
+            againstComputer = false
+            basic.showString("S")
+            radio.setGroup(1)
+            break;
+        }
+    }
 }
 function HumanSetValue () {
-    while (value == -1) {
+    while (radioGroup == -1) {
         if (input.pinIsPressed(TouchPin.P0)) {
-            // 0 Rock
-            value = 0
             basic.showString("R")
-            return value
+            return 0
         }
         if (input.pinIsPressed(TouchPin.P1)) {
-            // 1 Paper
-            value = 1
             basic.showString("P")
-            return value
+            return 1
         }
         if (input.pinIsPressed(TouchPin.P2)) {
-            // 2 Scissors
-            value = 2
             basic.showString("S")
-            return value
+            return 2
         }
     }
     return 0
 }
-let againstComputer = 0
-let value = 0
-value = -1
-againstComputer = -1
-while (againstComputer == -1) {
-    // while the play mode has not been selected
-    if (input.buttonIsPressed(Button.A)) {
-        againstComputer = 0
-        basic.showString("R")
-        radio.setGroup(1)
-    }
-    if (input.buttonIsPressed(Button.B)) {
-        againstComputer = 1
-        basic.showString("S")
-        radio.setGroup(1)
-    }
-}
-HumanSetValue()
+let changed = 0
+let radioGroup = 0
+let p2Val = 0
+let againstComputer = false
+let p1Val = 0
+setup()
+getValues()
+winner()
